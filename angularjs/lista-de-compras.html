@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html ng-app>
+	<head>
+		<meta charset="utf-8">
+		<title>Lista de compras</title>
+		<script src="http://code.angularjs.org/1.0.1/angular-1.0.1.min.js"></script>
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="jquery.json-2.3.min.js"></script>
+	</head>
+	<body ng-controller="ListaComprasController">
+		<p><input type="text" ng-model="nome">	Olá! Meu nome é: <strong>{{nome}}</strong></p>
+		<br><hr>
+
+		<div>
+			<table border="1">
+			  <thead>
+				<tr>
+				  <th>Código</th>
+				  <th>Produto</th>
+				  <th>Quantidade</th>
+				  <th>Ações</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr ng-repeat="item in itens" align="center">
+				  <td>{{ item.id }}</td>
+				  <td>{{ item.produto }}</td>
+				  <td>{{ item.quantidade }}</td>
+				  <td>
+				  	<a href="javascript:void(0)" ng-click="editarItem(item)"> editar </a> | 
+				  	<a href="javascript:void(0)" ng-click="removeItem(item)"> remover </a>
+				  </td>
+				</tr>
+			  </tbody>
+			</table>
+		</div>
+		<br><br>
+
+		<form class="form-inline" name="formItem">
+			<input type="hidden" ng-model="item.id">
+
+			Produto: <br><input type="text" ng-model="item.produto" required name="prod">
+			<span ng-show="formItem.prod.$error.required">O nome do produto é obrigatório</span>
+			<br>
+
+			Quantidade: <br><input type="number" ng-model="item.quantidade" required name="qtde">
+			<span ng-show="formItem.qtde.$error.required">A quantidade é obrigatória</span>
+			<br>
+
+			<button ng-click="salvar()" ng-disabled="formItem.$invalid">salvar</button>
+			<button ng-click="mostrarTodos()">mostrar todos</button>
+		</form>
+
+
+		<script type="text/javascript">
+			function ListaComprasController($scope) {
+				var reset = function() {
+					$scope.item 			= {};
+					$scope.item.id 			= 0;
+					$scope.item.produto 	= '';
+					$scope.item.quantidade 	= '';
+				}
+				reset();
+
+				$scope.itens = [
+					{id: 1, produto: 'Leite', 	quantidade: 2},
+					{id: 2, produto: 'Cerveja', quantidade: 12}
+				];
+				$scope.idCount = 2;
+
+				$scope.salvar = function() {
+					if ($scope.item.id == 0) {
+						$scope.idCount = $scope.idCount + 1;
+						$scope.itens.push({id: $scope.idCount, produto: $scope.item.produto, quantidade: $scope.item.quantidade});
+					}
+					reset();
+				};
+
+				$scope.editarItem = function(i) {
+					var index = $scope.itens.indexOf(i);
+					$scope.item = $scope.itens[index];
+				};
+
+				$scope.removeItem = function(i) {
+					var index = $scope.itens.indexOf(i);
+					$scope.itens.splice(index,1);
+					reset();
+				};
+
+				$scope.mostrarTodos = function() {
+					alert($.toJSON($scope.itens));
+				}
+			}
+		</script>
+	</body>
+</html>
